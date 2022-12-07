@@ -1,0 +1,21 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@invoke/api/(.*)": "<rootDir>/../libs/api/src/$1",
+    "@invoke/api": "<rootDir>/../libs/api/src",
+    "@invoke/wrapper/(.*)": "<rootDir>/../libs/wrapper/src/$1",
+    "@invoke/wrapper": "<rootDir>/../libs/wrapper/src",
+    "@invoke/core/(.*)": "<rootDir>/../libs/core/src/$1",
+    "@invoke/core": "<rootDir>/../libs/core/src"
+  }
+}
