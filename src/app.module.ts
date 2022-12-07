@@ -19,6 +19,10 @@ import { AppService } from './app.service';
           name: 'goorm-1',
           url: 'https://invoke.run-asia-northeast1.goorm.io/',
         },
+        {
+          name: 'goorm-2',
+          url: 'https://invokeai-gtjcv.run-asia-northeast1.goorm.io',
+        },
       ],
     }),
   ],
