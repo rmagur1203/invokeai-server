@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config/dist';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env', '../.env'],
     }),
     InvokeModule.register({
       servers: [
