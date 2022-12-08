@@ -64,6 +64,10 @@ export class InvokeService extends TypedEmitter<Events> {
       //   this.dequeue(server.name);
       // });
       this.$api[server.name].onGenerationResult((result) => {
+        result.thumbnail = this.$wrapper[server.name].getImage(
+          result.thumbnail,
+        );
+        result.url = this.$wrapper[server.name].getImage(result.url);
         this.emit('generateResult', result);
       });
     });
