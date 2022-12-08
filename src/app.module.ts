@@ -22,12 +22,16 @@ import { ConfigModule } from '@nestjs/config/dist';
           url: 'http://210.103.126.185:9090/',
         },
         {
-          name: 'goorm-1',
+          name: 'goorm-1 (rmagur1203)',
           url: 'https://invoke.run-asia-northeast1.goorm.io/',
         },
         {
-          name: 'goorm-2',
+          name: 'goorm-2 (rmagur1203)',
           url: 'https://invokeai-gtjcv.run-asia-northeast1.goorm.io',
+        },
+        {
+          name: 'goorm-3 (plebea)',
+          url: 'https://invokeai-eytdc.run-asia-northeast1.goorm.io',
         },
       ],
     }),
