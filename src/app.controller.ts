@@ -34,7 +34,7 @@ export class AppController {
     });
     this.invokeService.on('generateEnd', (uuid, result) => {
       console.log(`Generation ${uuid} finished`);
-      this.socket.emit('generateEnd', uuid, result);
+      this.socket?.emit('generateEnd', uuid, result);
     });
     this.invokeService.on('disconnect', (server) => {
       console.log(`Disconnected from ${server.name}`);
