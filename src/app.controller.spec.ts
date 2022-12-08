@@ -1,3 +1,4 @@
+import { InvokeModule } from '@invoke/wrapper';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,6 +8,16 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      imports: [
+        InvokeModule.register({
+          servers: [
+            {
+              name: 'plebea',
+              url: 'http://plebea.com:9090/',
+            },
+          ],
+        }),
+      ],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
@@ -15,8 +26,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+    // it('should return "Hello World!"', () => {
+    //   expect(appController.getHello()).toBe('Hello World!');
+    // });
   });
 });

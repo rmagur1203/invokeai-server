@@ -4,6 +4,7 @@ import {
   ProgressUpdate,
   IntermediateResult,
   GenerationParameters,
+  GenerationResult,
 } from '@invoke/api';
 import { EventEmitter } from 'events';
 import {
@@ -25,7 +26,11 @@ export default class SocketIOApiWrapper extends EventEmitter {
   private _statusMessage = 'Disconnected';
 
   public get isProcessing(): boolean {
-    return this.isProcessing ?? false;
+    return this.processing?.isProcessing ?? false;
+  }
+
+  public get connected(): boolean {
+    return this.api.socket.connected;
   }
 
   public get processing(): ProgressUpdate | undefined {
@@ -96,7 +101,9 @@ export default class SocketIOApiWrapper extends EventEmitter {
     return `${this.url}/${path}`;
   }
 
-  public async generate(_config: Partial<GenerationConfig>): Promise<any> {
+  public async generate(
+    _config: Partial<GenerationConfig>,
+  ): Promise<GenerationResult> {
     if (!this.systemConfig) {
       this.systemConfig = await this.getSystemConfig();
     }
@@ -121,11 +128,8 @@ export default class SocketIOApiWrapper extends EventEmitter {
       hires_fix: config.hires_fix,
       variation_amount: config.variation_amount,
     };
-    return this.api.generateImage(
-      parameter,
-      config.upscale,
-      config.restore_face,
-    );
+    this.api.generateImage(parameter, config.upscale, config.restore_face);
+    return await this.api.onceGenerationResultAsync();
   }
 
   public cancelGeneration(): void {
