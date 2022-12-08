@@ -2,8 +2,17 @@ import { generateSeed } from '@invoke/core';
 import { InvokeService } from '@invoke/wrapper';
 import { InvokeServer } from '@invoke/wrapper/interfaces';
 import { DefaultGenerationConfig } from '@invoke/wrapper/wrapper';
-import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
-import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
+import {
+  Body,
+  Query,
+} from '@nestjs/common/decorators/http/route-params.decorator';
 import { AppService } from './app.service';
 
 @Controller()
@@ -66,6 +75,43 @@ export class AppController {
     @Query('cfg_scale') cfg_scale: string,
     @Query('sampler') sampler: string,
     @Query('seed') seed: string,
+  ) {
+    if (!prompt) {
+      throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
+    }
+    const uuids: string[] = [];
+    for (let i = 0; i < Number(images); i++) {
+      uuids.push(
+        this.invokeService.enqueue({
+          ...DefaultGenerationConfig,
+          prompt,
+          images: 1,
+          steps: steps ? Number(steps) : DefaultGenerationConfig.steps,
+          width: width ? (Number(width) as any) : DefaultGenerationConfig.width,
+          height: height
+            ? (Number(height) as any)
+            : DefaultGenerationConfig.height,
+          cfg_scale: cfg_scale
+            ? Number(cfg_scale)
+            : DefaultGenerationConfig.cfg_scale,
+          sampler: sampler ? (sampler as any) : DefaultGenerationConfig.sampler,
+          seed: seed ? Number(seed) + i : generateSeed(),
+        }),
+      );
+    }
+    return uuids;
+  }
+
+  @Post('generate')
+  generatePost(
+    @Body('prompt') prompt: string,
+    @Body('images') images: string,
+    @Body('steps') steps: string,
+    @Body('width') width: string,
+    @Body('height') height: string,
+    @Body('cfg_scale') cfg_scale: string,
+    @Body('sampler') sampler: string,
+    @Body('seed') seed: string,
   ) {
     if (!prompt) {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);

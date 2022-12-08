@@ -75,7 +75,9 @@ export class InvokeService extends TypedEmitter<Events> {
   }
 
   public enqueue(config: GenerationConfig) {
-    this.$queue.push([uuidv4(), config]);
+    const uuid = uuidv4();
+    this.$queue.push([uuid, config]);
+    return uuid;
   }
 
   private async dequeue(serverName: string) {
