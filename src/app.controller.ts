@@ -13,18 +13,15 @@ import {
   Body,
   Query,
 } from '@nestjs/common/decorators/http/route-params.decorator';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { AppGateway } from './app.gateway';
 import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  @WebSocketServer()
-  private readonly socket: Server;
-
   constructor(
     private readonly appService: AppService,
     private readonly invokeService: InvokeService,
+    private readonly gateway: AppGateway,
   ) {
     this.invokeService.on('connect', (server) => {
       console.log(`Connected to ${server.name}`);
@@ -34,7 +31,7 @@ export class AppController {
     });
     this.invokeService.on('generateEnd', (uuid, result) => {
       console.log(`Generation ${uuid} finished`);
-      this.socket?.emit('generateEnd', uuid, result);
+      this.gateway.socket?.emit('generateEnd', uuid, result);
     });
     this.invokeService.on('disconnect', (server) => {
       console.log(`Disconnected from ${server.name}`);
