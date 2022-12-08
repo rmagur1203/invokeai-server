@@ -15,6 +15,7 @@ interface Events {
   connect: (server: InvokeServer) => void;
   generateStart: (uuid: string) => void;
   generateEnd: (uuid: string, result: GenerationResult) => void;
+  generateResult: (result: GenerationResult) => void;
   disconnect: (server: InvokeServer) => void;
 }
 
@@ -62,6 +63,9 @@ export class InvokeService extends TypedEmitter<Events> {
       // this.$api[server.name].onProcessingCanceled(() => {
       //   this.dequeue(server.name);
       // });
+      this.$api[server.name].onGenerationResult((result) => {
+        this.emit('generateResult', result);
+      });
     });
     setInterval(this.checkQueue.bind(this), 1000);
   }

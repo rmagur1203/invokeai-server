@@ -25,6 +25,7 @@ export class AppController {
   ) {
     this.invokeService.on('connect', (server) => {
       console.log(`Connected to ${server.name}`);
+      this.gateway.socket?.emit('serverConnected', server.name);
     });
     this.invokeService.on('generateStart', (uuid) => {
       console.log(`Generation ${uuid} started`);
@@ -32,6 +33,9 @@ export class AppController {
     this.invokeService.on('generateEnd', (uuid, result) => {
       console.log(`Generation ${uuid} finished`);
       this.gateway.socket?.emit('generateEnd', uuid, result);
+    });
+    this.invokeService.on('generateResult', (result) => {
+      this.gateway.socket?.emit('generateResult', result);
     });
     this.invokeService.on('disconnect', (server) => {
       console.log(`Disconnected from ${server.name}`);
