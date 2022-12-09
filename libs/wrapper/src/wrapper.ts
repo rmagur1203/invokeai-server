@@ -21,23 +21,23 @@ export default class SocketIOApiWrapper extends EventEmitter {
   public readonly api: SocketIOApi;
   private systemConfig?: SystemConfig;
 
-  private _processing?: ProgressUpdate;
+  private _progress?: ProgressUpdate;
   private _intermediate?: IntermediateResult;
   private _statusMessage = 'Disconnected';
 
   public get isProcessing(): boolean {
-    return this.processing?.isProcessing ?? false;
+    return this.progress?.isProcessing ?? false;
   }
 
   public get connected(): boolean {
     return this.api.socket.connected;
   }
 
-  public get processing(): ProgressUpdate | undefined {
-    return this._processing;
+  public get progress(): ProgressUpdate | undefined {
+    return this._progress;
   }
-  private set processing(value: ProgressUpdate | undefined) {
-    this._processing = value;
+  private set progress(value: ProgressUpdate | undefined) {
+    this._progress = value;
   }
 
   public get intermediate(): IntermediateResult | undefined {
@@ -58,12 +58,12 @@ export default class SocketIOApiWrapper extends EventEmitter {
     super();
     this.api = new SocketIOApi(url);
     this.api.onConnect(() => {
-      this.processing = undefined;
+      this.progress = undefined;
       this.intermediate = undefined;
       this.statusMessage = 'Connected';
     });
     this.api.onProgressUpdate((progress) => {
-      this.processing = progress;
+      this.progress = progress;
       this.statusMessage = progress.currentStatus;
       if (progress.isProcessing && progress.currentIteration > 1) {
         this.statusMessage += ` (${progress.currentIteration}/${progress.totalIterations})`;
@@ -73,17 +73,17 @@ export default class SocketIOApiWrapper extends EventEmitter {
       this.intermediate = result;
     });
     this.api.onProcessingCanceled(() => {
-      this.processing = undefined;
+      this.progress = undefined;
       this.intermediate = undefined;
       this.statusMessage = 'Processing canceled';
     });
     this.api.onModelChanged(() => {
-      this.processing = undefined;
+      this.progress = undefined;
       this.intermediate = undefined;
       this.statusMessage = 'Model Changed';
     });
     this.api.onDisconnect(() => {
-      this.processing = undefined;
+      this.progress = undefined;
       this.intermediate = undefined;
       this.statusMessage = 'Disconnected';
     });

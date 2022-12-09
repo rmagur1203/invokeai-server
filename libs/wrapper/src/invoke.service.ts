@@ -1,6 +1,5 @@
 import { GenerationResult, ProgressUpdate, SocketIOApi } from '@invoke/api';
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { EventEmitter } from 'events';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { v4 as uuidv4 } from 'uuid';
 import { InvokeModuleOptions, InvokeServer } from './interfaces';
@@ -127,16 +126,16 @@ export class InvokeService extends TypedEmitter<Events> {
     return this.$wrapper[name].statusMessage;
   }
 
-  public get processing(): Record<string, any> {
+  public get progress(): Record<string, any> {
     return Object.entries(this.$wrapper)
       .map(([key, value]) => {
-        return { [key]: value.processing };
+        return { [key]: value.progress };
       })
       .reduce((acc, cur) => ({ ...acc, ...cur }));
   }
 
-  public getProcessing(name: string): ProgressUpdate {
-    return this.$wrapper[name].processing;
+  public getProgress(name: string): ProgressUpdate {
+    return this.$wrapper[name].progress;
   }
 
   public get results(): Record<string, GenerationResult> {

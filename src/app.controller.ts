@@ -48,7 +48,7 @@ export class AppController {
       name: server.name,
       url: server.url,
       status: this.invokeService.getStatusMessage(server.name),
-      processing: this.invokeService.getProcessing(server.name),
+      progress: this.invokeService.getProgress(server.name),
     }));
   }
 
@@ -62,9 +62,14 @@ export class AppController {
     return this.invokeService.getStatusMessage(name);
   }
 
-  @Get('process')
-  getProcessing(): Record<string, any> {
-    return this.invokeService.processing;
+  @Get('progress')
+  getProgress(): Record<string, any> {
+    return this.invokeService.progress;
+  }
+
+  @Get('progress/:name')
+  getProgressByName(name: string): any {
+    return this.invokeService.getProgress(name);
   }
 
   @Get('queue')
