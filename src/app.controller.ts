@@ -140,24 +140,27 @@ export class AppController {
     if (!prompt) {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
     }
+    const uuids: string[] = [];
     for (let i = 0; i < Number(images); i++) {
-      this.invokeService.enqueue({
-        ...DefaultGenerationConfig,
-        prompt,
-        images: 1,
-        steps: steps ? Number(steps) : DefaultGenerationConfig.steps,
-        width: width ? (Number(width) as any) : DefaultGenerationConfig.width,
-        height: height
-          ? (Number(height) as any)
-          : DefaultGenerationConfig.height,
-        cfg_scale: cfg_scale
-          ? Number(cfg_scale)
-          : DefaultGenerationConfig.cfg_scale,
-        sampler: sampler ? (sampler as any) : DefaultGenerationConfig.sampler,
-        seed: seed ? Number(seed) + i : generateSeed(),
-      });
+      uuids.push(
+        this.invokeService.enqueue({
+          ...DefaultGenerationConfig,
+          prompt,
+          images: 1,
+          steps: steps ? Number(steps) : DefaultGenerationConfig.steps,
+          width: width ? (Number(width) as any) : DefaultGenerationConfig.width,
+          height: height
+            ? (Number(height) as any)
+            : DefaultGenerationConfig.height,
+          cfg_scale: cfg_scale
+            ? Number(cfg_scale)
+            : DefaultGenerationConfig.cfg_scale,
+          sampler: sampler ? (sampler as any) : DefaultGenerationConfig.sampler,
+          seed: seed ? Number(seed) + i : generateSeed(),
+        }),
+      );
     }
-    return this.invokeService.queue;
+    return uuids;
   }
 
   @Get('result')
