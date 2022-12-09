@@ -72,6 +72,18 @@ export class AppController {
     return this.invokeService.queue;
   }
 
+  @Get('queue/clear')
+  clearQueue() {
+    this.invokeService.clearQueue();
+    return this.invokeService.queue;
+  }
+
+  @Get('queue/shuffle')
+  shuffleQueue() {
+    this.invokeService.shuffleQueue();
+    return this.invokeService.queue;
+  }
+
   @Get('generate')
   generate(
     @Query('prompt') prompt: string,

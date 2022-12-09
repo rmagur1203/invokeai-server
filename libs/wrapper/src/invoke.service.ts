@@ -88,7 +88,7 @@ export class InvokeService extends TypedEmitter<Events> {
     return uuid;
   }
 
-  private async dequeue(serverName: string) {
+  public async dequeue(serverName: string) {
     if (this.$queue.length > 0) {
       const [uuid, config] = this.$queue.shift();
       this.emit('generateStart', uuid);
@@ -99,6 +99,14 @@ export class InvokeService extends TypedEmitter<Events> {
         this.emit('generateEnd', uuid, result);
       });
     }
+  }
+
+  public clearQueue() {
+    this.$queue = [];
+  }
+
+  public shuffleQueue() {
+    this.$queue = this.$queue.sort(() => Math.random() - 0.5);
   }
 
   public checkQueue() {
