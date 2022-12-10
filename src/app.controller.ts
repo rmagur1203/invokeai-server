@@ -118,6 +118,7 @@ export class AppController {
     @Query('cfg_scale') cfg_scale: string,
     @Query('sampler') sampler: string,
     @Query('seed') seed: string,
+    @Query('highres') highres: string,
   ) {
     if (!prompt) {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
@@ -139,6 +140,7 @@ export class AppController {
             : DefaultGenerationConfig.cfg_scale,
           sampler: sampler ? (sampler as any) : DefaultGenerationConfig.sampler,
           seed: seed ? Number(seed) + i : generateSeed(),
+          hires_fix: highres ? highres.toLowerCase() === 'true' : false,
         }),
       );
     }
@@ -155,6 +157,7 @@ export class AppController {
     @Body('cfg_scale') cfg_scale: string,
     @Body('sampler') sampler: string,
     @Body('seed') seed: string,
+    @Body('highres') highres: string,
   ) {
     if (!prompt) {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
@@ -176,6 +179,7 @@ export class AppController {
             : DefaultGenerationConfig.cfg_scale,
           sampler: sampler ? (sampler as any) : DefaultGenerationConfig.sampler,
           seed: seed ? Number(seed) + i : generateSeed(),
+          hires_fix: highres ? highres.toLowerCase() === 'true' : false,
         }),
       );
     }
