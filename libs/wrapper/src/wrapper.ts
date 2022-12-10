@@ -135,6 +135,10 @@ export default class SocketIOApiWrapper extends EventEmitter {
   public cancelGeneration(): void {
     this.api.cancel();
   }
+
+  public forceSetProgress(progress: ProgressUpdate): void {
+    this.progress = progress;
+  }
 }
 
 export type valueOf<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<

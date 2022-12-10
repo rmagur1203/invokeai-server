@@ -140,6 +140,16 @@ export class InvokeService extends TypedEmitter<Events> {
         if (index < 0) return;
         const work = this.$queue.splice(index, 1)[0];
         this.generate(work, server);
+        this.$wrapper[server].forceSetProgress({
+          currentStep: 1,
+          totalSteps: 50,
+          currentIteration: 1,
+          totalIterations: 1,
+          currentStatus: 'Preparing',
+          isProcessing: true,
+          currentStatusHasSteps: false,
+          hasError: false,
+        });
       } else this.dequeue(server);
     });
   }
