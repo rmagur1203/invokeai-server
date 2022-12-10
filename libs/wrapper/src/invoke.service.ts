@@ -108,6 +108,12 @@ export class InvokeService extends TypedEmitter<Events> {
 
   public async dequeue(serverName: string) {
     if (this.$queue.length > 0) {
+      if (
+        this.serverRecords[serverName].maxSize &&
+        this.serverRecords[serverName].maxSize <
+          this.topQueue[1].width * this.topQueue[1].height
+      )
+        return;
       const [uuid, config] = this.$queue.shift();
       this.emit('generateStart', uuid);
       this.$wrapper[serverName].generate(config).then((result) => {
@@ -129,11 +135,7 @@ export class InvokeService extends TypedEmitter<Events> {
 
   public checkQueue() {
     this.availableServers.forEach((server) => {
-      if (
-        !this.$wrapper[server].isProcessing &&
-        this.serverRecords[server].maxSize >=
-          this.topQueue[1].width * this.topQueue[1].height
-      ) {
+      if (!this.$wrapper[server].isProcessing) {
         this.dequeue(server);
       }
     });
