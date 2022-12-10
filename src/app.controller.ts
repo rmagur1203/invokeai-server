@@ -47,8 +47,7 @@ export class AppController {
   @Get()
   getServers(): InvokeServer[] {
     return this.invokeService.servers.map((server) => ({
-      name: server.name,
-      url: server.url,
+      ...server,
       status: this.invokeService.getStatusMessage(server.name),
       progress: this.invokeService.getProgress(server.name),
     }));
