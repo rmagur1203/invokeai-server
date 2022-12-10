@@ -21,7 +21,7 @@ import { ConfigModule } from '@nestjs/config/dist';
         {
           name: 'rmagur1203',
           url: 'http://210.103.126.185:9090/',
-          maxSize: 688128,
+          maxSize: 851968,
         },
         {
           name: 'goorm-1 (rmagur1203)',
