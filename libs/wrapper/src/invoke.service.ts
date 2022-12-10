@@ -114,14 +114,8 @@ export class InvokeService extends TypedEmitter<Events> {
           this.topQueue[1].width * this.topQueue[1].height
       )
         return;
-      const [uuid, config] = this.$queue.shift();
-      this.emit('generateStart', uuid);
-      this.$wrapper[serverName].generate(config).then((result) => {
-        result.thumbnail = this.$wrapper[serverName].getImage(result.thumbnail);
-        result.url = this.$wrapper[serverName].getImage(result.url);
-        this.$result[uuid] = result;
-        this.emit('generateEnd', uuid, result);
-      });
+      const work = this.$queue.shift();
+      this.generate(work, serverName);
     }
   }
 
@@ -134,10 +128,31 @@ export class InvokeService extends TypedEmitter<Events> {
   }
 
   public checkQueue() {
+    if (this.$queue.length <= 0) return;
     this.availableServers.forEach((server) => {
-      if (!this.$wrapper[server].isProcessing) {
-        this.dequeue(server);
-      }
+      if (this.$wrapper[server].isProcessing) return;
+      if (this.serverRecords[server].maxSize) {
+        const index = this.$queue.findIndex(
+          ([uuid, config]) =>
+            this.serverRecords[server].maxSize >= config.width * config.height,
+        );
+        if (index < 0) return;
+        const work = this.$queue.splice(index, 1)[0];
+        this.generate(work, server);
+      } else this.dequeue(server);
+    });
+  }
+
+  public generate(
+    [uuid, config]: [string, GenerationConfig],
+    serverName: string,
+  ) {
+    this.emit('generateStart', uuid);
+    this.$wrapper[serverName].generate(config).then((result) => {
+      result.thumbnail = this.$wrapper[serverName].getImage(result.thumbnail);
+      result.url = this.$wrapper[serverName].getImage(result.url);
+      this.$result[uuid] = result;
+      this.emit('generateEnd', uuid, result);
     });
   }
 

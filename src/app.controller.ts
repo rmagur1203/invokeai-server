@@ -104,7 +104,7 @@ export class AppController {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
     }
     const uuids: string[] = [];
-    for (let i = 0; i < Number(images); i++) {
+    for (let i = 0; i < Number(images ?? 1); i++) {
       uuids.push(
         this.invokeService.enqueue({
           ...DefaultGenerationConfig,
@@ -141,7 +141,7 @@ export class AppController {
       throw new HttpException('Missing prompt', HttpStatus.BAD_REQUEST);
     }
     const uuids: string[] = [];
-    for (let i = 0; i < Number(images); i++) {
+    for (let i = 0; i < Number(images ?? 1); i++) {
       uuids.push(
         this.invokeService.enqueue({
           ...DefaultGenerationConfig,
