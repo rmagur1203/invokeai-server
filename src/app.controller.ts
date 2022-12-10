@@ -67,6 +67,12 @@ export class AppController {
     return this.invokeService.progress;
   }
 
+  @Get('progress/reset')
+  resetProgress() {
+    this.invokeService.resetProgress();
+    return this.invokeService.progress;
+  }
+
   @Get('progress/:name')
   getProgressByName(name: string): any {
     return this.invokeService.getProgress(name);

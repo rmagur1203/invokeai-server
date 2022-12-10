@@ -207,4 +207,19 @@ export class InvokeService extends TypedEmitter<Events> {
   public getResult(uuid: string): GenerationResult {
     return this.$result[uuid];
   }
+
+  public resetProgress() {
+    Object.values(this.$wrapper).forEach((wrapper) => {
+      wrapper.forceSetProgress({
+        currentStep: 0,
+        totalSteps: 0,
+        currentIteration: 0,
+        totalIterations: 0,
+        currentStatus: 'Forced reset',
+        isProcessing: false,
+        currentStatusHasSteps: false,
+        hasError: false,
+      });
+    });
+  }
 }
