@@ -20,6 +20,7 @@ interface Events {
 
 @Injectable()
 export class InvokeService extends TypedEmitter<Events> {
+  private $checker: NodeJS.Timer | null = null;
   private $store: Record<string, any> = {};
   private $wrapper: Record<string, SocketIOApiWrapper> = {};
   private $queue: [string, GenerationConfig][] = [];
@@ -80,7 +81,7 @@ export class InvokeService extends TypedEmitter<Events> {
         this.emit('generateResult', result);
       });
     });
-    setInterval(this.checkQueue.bind(this), 1000);
+    this.$checker = setInterval(this.checkQueue.bind(this), 10 * 1000);
   }
 
   public get servers(): InvokeServer[] {
