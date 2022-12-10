@@ -9,6 +9,10 @@ export interface InvokeServer {
    * url of the server
    */
   url: string;
+  /**
+   * maximum generation image size
+   */
+  maxSize?: number;
 }
 
 export interface InvokeModuleOptions {

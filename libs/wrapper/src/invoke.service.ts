@@ -31,6 +31,16 @@ export class InvokeService extends TypedEmitter<Events> {
       }),
     );
   }
+  // private get availableServerNames(): string[] {
+  //   return Object.entries(this.$wrapper)
+  //     .filter(([key, value]) => value.connected)
+  //     .map(([key, value]) => key);
+  // }
+  // private get availableServers(): InvokeServer[] {
+  //   return Object.entries(this.$wrapper)
+  //     .filter(([key, value]) => value.connected)
+  //     .map(([key, value]) => this.serverRecords[key]);
+  // }
   private get availableServers(): string[] {
     return Object.entries(this.$wrapper)
       .filter(([key, value]) => value.connected)
@@ -76,9 +86,18 @@ export class InvokeService extends TypedEmitter<Events> {
   public get servers(): InvokeServer[] {
     return this.options.servers;
   }
+  public get serverRecords(): Record<string, InvokeServer> {
+    return Object.fromEntries(
+      this.options.servers.map((server) => [server.name, server]),
+    );
+  }
 
   public get queue() {
     return this.$queue;
+  }
+
+  public get topQueue() {
+    return this.$queue[0];
   }
 
   public enqueue(config: GenerationConfig) {
@@ -110,7 +129,13 @@ export class InvokeService extends TypedEmitter<Events> {
 
   public checkQueue() {
     this.availableServers.forEach((server) => {
-      if (!this.$wrapper[server].isProcessing) this.dequeue(server);
+      if (
+        !this.$wrapper[server].isProcessing &&
+        this.serverRecords[server].maxSize >=
+          this.topQueue[1].width * this.topQueue[1].height
+      ) {
+        this.dequeue(server);
+      }
     });
   }
 

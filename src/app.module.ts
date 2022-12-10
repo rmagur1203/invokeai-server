@@ -16,10 +16,12 @@ import { ConfigModule } from '@nestjs/config/dist';
         {
           name: 'plebea',
           url: 'http://plebea.com:9090/',
+          maxSize: 1433600,
         },
         {
           name: 'rmagur1203',
           url: 'http://210.103.126.185:9090/',
+          maxSize: 688128,
         },
         {
           name: 'goorm-1 (rmagur1203)',
