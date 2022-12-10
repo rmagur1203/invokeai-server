@@ -144,6 +144,15 @@ export class InvokeService extends TypedEmitter<Events> {
     });
   }
 
+  public stopChecker() {
+    if (this.$checker) clearInterval(this.$checker);
+  }
+
+  public startChecker() {
+    if (!this.$checker)
+      this.$checker = setInterval(this.checkQueue.bind(this), 10 * 1000);
+  }
+
   public generate(
     [uuid, config]: [string, GenerationConfig],
     serverName: string,

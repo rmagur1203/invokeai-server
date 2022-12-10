@@ -89,6 +89,18 @@ export class AppController {
     return this.invokeService.queue;
   }
 
+  @Get('queue/freeze')
+  freezeQueue() {
+    this.invokeService.stopChecker();
+    return this.invokeService.queue;
+  }
+
+  @Get('queue/unfreeze')
+  unfreezeQueue() {
+    this.invokeService.startChecker();
+    return this.invokeService.queue;
+  }
+
   @Get('generate')
   generate(
     @Query('prompt') prompt: string,
