@@ -1,4 +1,9 @@
-import { GenerationResult, ProgressUpdate, SocketIOApi } from '@invoke/api';
+import {
+  GenerationResult,
+  IntermediateResult,
+  ProgressUpdate,
+  SocketIOApi,
+} from '@invoke/api';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +17,19 @@ interface Stored {
 
 interface Events {
   connect: (server: InvokeServer) => void;
-  generateStart: (uuid: string) => void;
-  generateEnd: (uuid: string, result: GenerationResult) => void;
-  generateResult: (result: GenerationResult) => void;
+  generateStart: (server: InvokeServer, uuid: string) => void;
+  generateEnd: (
+    server: InvokeServer,
+    uuid: string,
+    result: GenerationResult,
+  ) => void;
+  generateCancel: (server: InvokeServer) => void;
+  generateResult: (server: InvokeServer, result: GenerationResult) => void;
+  intermediateResult: (
+    server: InvokeServer,
+    result: IntermediateResult,
+  ) => void;
+  progressUpdate: (server: InvokeServer, progress: ProgressUpdate) => void;
   disconnect: (server: InvokeServer) => void;
 }
 
@@ -32,16 +47,6 @@ export class InvokeService extends TypedEmitter<Events> {
       }),
     );
   }
-  // private get availableServerNames(): string[] {
-  //   return Object.entries(this.$wrapper)
-  //     .filter(([key, value]) => value.connected)
-  //     .map(([key, value]) => key);
-  // }
-  // private get availableServers(): InvokeServer[] {
-  //   return Object.entries(this.$wrapper)
-  //     .filter(([key, value]) => value.connected)
-  //     .map(([key, value]) => this.serverRecords[key]);
-  // }
   private get availableServers(): string[] {
     return Object.entries(this.$wrapper)
       .filter(([key, value]) => value.connected)
@@ -60,25 +65,25 @@ export class InvokeService extends TypedEmitter<Events> {
 
       this.$api[server.name].onConnect(() => {
         this.emit('connect', server);
-        // this.dequeue(server.name);
       });
       this.$api[server.name].onDisconnect(() => {
         this.emit('disconnect', server);
       });
-      // this.$api[server.name].onProgressUpdate((progress) => {
-      //   if (!progress.isProcessing) {
-      //     this.dequeue(server.name);
-      //   }
-      // });
-      // this.$api[server.name].onProcessingCanceled(() => {
-      //   this.dequeue(server.name);
-      // });
+      this.$api[server.name].onIntermediateResult((result) => {
+        this.emit('intermediateResult', server, result);
+      });
+      this.$api[server.name].onProgressUpdate((progress) => {
+        this.emit('progressUpdate', server, progress);
+      });
+      this.$api[server.name].onProcessingCanceled(() => {
+        this.emit('generateCancel', server);
+      });
       this.$api[server.name].onGenerationResult((result) => {
         result.thumbnail = this.$wrapper[server.name].getImage(
           result.thumbnail,
         );
         result.url = this.$wrapper[server.name].getImage(result.url);
-        this.emit('generateResult', result);
+        this.emit('generateResult', server, result);
       });
     });
     this.$checker = setInterval(this.checkQueue.bind(this), 10 * 1000);
@@ -167,12 +172,13 @@ export class InvokeService extends TypedEmitter<Events> {
     [uuid, config]: [string, GenerationConfig],
     serverName: string,
   ) {
-    this.emit('generateStart', uuid);
+    const server = this.serverRecords[serverName];
+    this.emit('generateStart', server, uuid);
     this.$wrapper[serverName].generate(config).then((result) => {
       result.thumbnail = this.$wrapper[serverName].getImage(result.thumbnail);
       result.url = this.$wrapper[serverName].getImage(result.url);
       this.$result[uuid] = result;
-      this.emit('generateEnd', uuid, result);
+      this.emit('generateEnd', server, uuid, result);
     });
   }
 
