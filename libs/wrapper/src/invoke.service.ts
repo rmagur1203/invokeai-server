@@ -160,7 +160,10 @@ export class InvokeService extends TypedEmitter<Events> {
   }
 
   public stopChecker() {
-    if (this.$checker) clearInterval(this.$checker);
+    if (this.$checker) {
+      clearInterval(this.$checker);
+      this.$checker = null;
+    }
   }
 
   public startChecker() {
