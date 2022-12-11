@@ -16,7 +16,7 @@ import { ConfigModule } from '@nestjs/config/dist';
         {
           name: 'plebea',
           url: 'http://plebea.com:9090/',
-          maxSize: 1433600,
+          maxSize: 2150400,
         },
         {
           name: 'rmagur1203',
