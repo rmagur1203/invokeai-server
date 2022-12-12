@@ -79,6 +79,7 @@ export class InvokeService extends TypedEmitter<Events> {
         this.emit('generateCancel', server);
       });
       this.$api[server.name].onGenerationResult((result) => {
+        result = { ...result };
         result.thumbnail = this.$wrapper[server.name].getImage(
           result.thumbnail,
         );
@@ -178,6 +179,7 @@ export class InvokeService extends TypedEmitter<Events> {
     const server = this.serverRecords[serverName];
     this.emit('generateStart', server, uuid);
     this.$wrapper[serverName].generate(config).then((result) => {
+      result = { ...result };
       result.thumbnail = this.$wrapper[serverName].getImage(result.thumbnail);
       result.url = this.$wrapper[serverName].getImage(result.url);
       this.$result[uuid] = result;
