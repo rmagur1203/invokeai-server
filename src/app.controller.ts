@@ -29,11 +29,11 @@ export class AppController {
     });
     this.invokeService.on('generateStart', (server, uuid) => {
       console.log(`Generation ${uuid} started on ${server.name}`);
-      this.gateway.socket?.emit('generateStart', uuid);
+      this.gateway.socket?.emit('generateStart', server, uuid);
     });
     this.invokeService.on('generateEnd', (server, uuid, result) => {
       console.log(`Generation ${uuid} finished on ${server.name}`);
-      this.gateway.socket?.emit('generateEnd', uuid, result);
+      this.gateway.socket?.emit('generateEnd', server, uuid, result);
     });
     this.invokeService.on('generateResult', (server, result) => {
       this.gateway.socket?.emit('generateResult', result);
